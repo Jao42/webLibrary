@@ -1,122 +1,178 @@
-function Book(title, author, pages, readed) {
+function Book(Title, Author, Pages, Readed) {
 
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.readed = readed;
+  return { Title, Author, Pages, Readed }
+
 }
 
-function addListenerReadButton(readButton, readOption){
+function addListenerReadButton(readButton, readOption, Book){
   readButton.addEventListener('click', () => {
-    if (readOption.textContent === 'SIM') {
-      readOption.textContent = 'NÃO';
+    index = library.indexOf(Book)
+    if (readOption.textContent === 'YES') {
+      library[index]['Readed'] = 'NO';
+      readOption.textContent = 'NO';
     }
-    else (readOption.textContent = 'SIM');
-    
+    else {
+      library[library.indexOf(Book)]['Readed'] = 'YES';
+      readOption.textContent = 'YES';
+
+      }
+
+    localStorage.removeItem(String(index))
+    localStorage.setItem(String(index), JSON.stringify(library[index]))
   })
 } 
 
 let library = []
 cardBox = document.querySelector('.card-box');
 
-function closeButtonListener(closeButton, card, cardBox) {
-  closeButton.addEventListener('click', () => {
-    index = parseInt(card.id[card.id.length - 1]);
-    cardBox.removeChild(card);
-    library.splice(index, 1);
-  });
+function createLibraryElements(Book) {
+
+    card = document.createElement('div');
+    closeButton = document.createElement('div');
+    cardTable = document.createElement('div');
+    divTitle = document.createElement('div');
+    divAuthor = document.createElement('div');
+    divPages = document.createElement('div');
+    divReaded = document.createElement('div');
+
+    tableRows = {
+      Title: divTitle,
+      Author: divAuthor,
+      Pages: divPages,
+      Readed: divReaded
+
+    }
+    card.classList.add('card');
+    /*card.setAttribute('id', `card${library.indexOf(Book)}`);*/
+    closeButton.textContent = '×';
+    closeButton.classList.add('closeButton');
+    divTitle.classList.add('card-title');
+    card.appendChild(closeButton);
+    card.appendChild(cardTable);
+    cardBox.appendChild(card);
 }
+
+function putTableContent(tableRows, Book) {
+
+  for (key in tableRows) {
+    if (key === 'Title') {
+      tableRows[key].innerHTML = '<span></span>';
+      tableRows[key].firstElementChild.textContent = Book[key];
+    }
+
+    else if (key === 'Readed') {
+      tableRows[key].innerHTML = `<span>${key}:</span> <div class="right readOptions"><span>${Book[key]}</span> <input type="checkbox" ${Book[key] == 'YES'? 'checked':''}/></div>`;
+    }
+
+    else {
+      tableRows[key].innerHTML = '<span></span> <span class="right"></span>';
+      tableRows[key].firstElementChild.textContent = key + ':';
+      tableRows[key].lastElementChild.textContent = Book[key];
+    }    
+  cardTable.appendChild(tableRows[key]);
+
+  }
+}
+
+function closeButtonListener(closeButton, card, cardBox, newBook) {
+  closeButton.addEventListener('click', () => {
+    cardBox.removeChild(card);
+    index = library.indexOf(newBook)
+     /* delete library[index]; */
+    library.splice(index, 1);
+    localStorage.clear();
+    library.forEach((e, i) => {
+      localStorage.setItem(String(i), JSON.stringify(e));
+    
+    })
+  })
+}
+
+function updateCardListeners(newBook) {
+
+  readOptionsDivs = document.querySelectorAll('.readOptions');
+  changeReadButtons = document.querySelectorAll('.readOptions > input');
+
+  lastReadOption = changeReadButtons[changeReadButtons.length -1].previousElementSibling;
+  lastReadButton = changeReadButtons[changeReadButtons.length -1];
+
+  addListenerReadButton(lastReadButton, lastReadOption, newBook);
+  closeButtonListener(closeButton, card, cardBox, newBook);
+}
+
+function persistence() {
+  if (library.length < localStorage.length) {
+      elementsNum = localStorage.length;
+
+      for(let i = 0; i < elementsNum; i++) {
+        restoreBook = localStorage.getItem(String(i)) 
+        restoreBook = JSON.parse(restoreBook)
+      
+        library.push(restoreBook)
+        createLibraryElements(restoreBook);
+        putTableContent(tableRows, restoreBook);
+        updateCardListeners(restoreBook);
+    }  
+  }
+}
+
 
 const newBookButton = document.querySelector('.book-creator-button');
 const modal = document.querySelector('.modal');
 const modalContent = document.querySelector('.modal-content');
 const closeModal = document.getElementById('closeModal');
-changeReadTds = document.querySelectorAll('.changeReadTd');
-changeReadButtons = document.querySelectorAll('.changeReadTd > input');
+const form = document.querySelector('form');
+const submitButton = document.querySelector('.submit');
+const campos = document.querySelectorAll('input[type]');
 
-defaultBook = new Book('O Hobbit', 'J.R Tolkien', 360, 'SIM');
-library.push(defaultBook);
+persistence()
+
+
+/*
+defaultBook = new Book('O Hobbit', 'J.R Tolkien', 360, 'NO');
 defaultCard = document.querySelector('.card');
 defaultCard.setAttribute('id', `card${library.indexOf(defaultBook)}`);
-closeButtonListener(document.querySelector('.card > .closeButton'), defaultCard, cardBox);
-
-lastReadOption = changeReadTds[changeReadTds.length -1].previousElementSibling;
+library.push(defaultBook)
+closeButtonListener(document.querySelector('.card > .closeButton'), defaultCard, cardBox, library.indexOf(defaultBook));
+lastReadOption = changeReadButtons[changeReadButtons.length -1].previousElementSibling;
 lastReadButton = changeReadButtons[changeReadButtons.length -1];
 
-addListenerReadButton(lastReadButton, lastReadOption);
+addListenerReadButton(lastReadButton, lastReadOption, defaultBook);
+*/
 
 newBookButton.addEventListener('click', () => {
   modal.style.display = 'grid';
   modalContent.style.display = 'flex';
 })
 
-
 closeModal.addEventListener('click', () => {
   modal.style.display = 'none';
   modalContent.style.display = 'none';
+  form.reset();
 })
 
-const form = document.querySelector('form');
-const submitButton = document.querySelector('.submit');
-const campos = document.querySelectorAll('input[type]');
-let persistence = [];
 let newBook;
 
 submitButton.addEventListener('click', function(e) {
-    newBook = new Book(
+    newBook = Book(
       campos[0].value,
       campos[1].value,
       campos[2].value,
-      (campos[3].checked ? 'SIM': 'NÃO') 
+      (campos[3].checked ? 'YES': 'NO') 
     ) 
+  
     library.push(newBook);
+    localStorage.setItem(`${library.indexOf(newBook)}`, JSON.stringify(newBook));
+
     form.reset();
     modal.style.display = 'none';
   
-    card = document.createElement('div');
-    closeButton = document.createElement('div');
-    cardTable = document.createElement('table');
-    trTitle = document.createElement('tr');
-    trAuthor = document.createElement('tr');
-    trPages = document.createElement('tr');
-    trReaded= document.createElement('tr');
+    createLibraryElements(newBook);
+    putTableContent(tableRows, newBook);
 
-    tableRows = {
-      title: trTitle,
-      author: trAuthor,
-      pages: trPages,
-      readed: trReaded
+    readOptionsDivs = document.querySelectorAll('.readOptions');
+    changeReadButtons = document.querySelectorAll('.readOptions > input');
 
-    }
+    updateCardListeners(newBook);
 
-    for (key in tableRows) {
-      if (key === 'title') {
-        tableRows[key].innerHTML = `<th class="card-title">${newBook[key]}</th>`;
-      }
-      else if (key === 'readed') {
-        tableRows[key].innerHTML = `<td>${key}:</td> <td>${newBook[key]}</td> <td class="changeReadTd"><input type="checkbox" ${newBook[key] == 'SIM'? 'checked':''}/></td>`;
-      }
-      else {
-        tableRows[key].innerHTML = `<td>${key}:</td> <td>${newBook[key]}</td>`;
-}    
-    cardTable.appendChild(tableRows[key]);
-  }
-
-    card.classList.add('card');
-    card.setAttribute('id', `card${library.indexOf(newBook)}`);
-    closeButton.textContent = '×';
-    closeButton.classList.add('closeButton');
-    card.appendChild(closeButton);
-    card.appendChild(cardTable);
-    cardBox.appendChild(card);
-
-    changeReadTds = document.querySelectorAll('.changeReadTd');
-    changeReadButtons = document.querySelectorAll('.changeReadTd > input');
-
-    lastReadOption = changeReadTds[changeReadTds.length -1].previousElementSibling;
-    lastReadButton = changeReadButtons[changeReadButtons.length -1];
-
-    addListenerReadButton(lastReadButton, lastReadOption);
-    closeButtonListener(closeButton, card, cardBox);
-})
-
+  })
