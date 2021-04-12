@@ -1,7 +1,11 @@
-function Book(Title, Author, Pages, Readed) {
+class Book {
 
-  return { Title, Author, Pages, Readed }
-
+  constructor(Title, Author, Pages, Readed) {
+    this.Title = Title
+    this.Author = Author
+    this.Pages = Pages
+    this.Readed = Readed
+  }
 }
 
 function addListenerReadButton(readButton, readOption, Book){
@@ -43,7 +47,6 @@ function createLibraryElements(Book) {
 
     }
     card.classList.add('card');
-    /*card.setAttribute('id', `card${library.indexOf(Book)}`);*/
     closeButton.textContent = '×';
     closeButton.classList.add('closeButton');
     divTitle.classList.add('card-title');
@@ -127,19 +130,6 @@ const campos = document.querySelectorAll('input[type]');
 
 persistence()
 
-
-/*
-defaultBook = new Book('O Hobbit', 'J.R Tolkien', 360, 'NO');
-defaultCard = document.querySelector('.card');
-defaultCard.setAttribute('id', `card${library.indexOf(defaultBook)}`);
-library.push(defaultBook)
-closeButtonListener(document.querySelector('.card > .closeButton'), defaultCard, cardBox, library.indexOf(defaultBook));
-lastReadOption = changeReadButtons[changeReadButtons.length -1].previousElementSibling;
-lastReadButton = changeReadButtons[changeReadButtons.length -1];
-
-addListenerReadButton(lastReadButton, lastReadOption, defaultBook);
-*/
-
 newBookButton.addEventListener('click', () => {
   modal.style.display = 'grid';
   modalContent.style.display = 'flex';
@@ -154,7 +144,7 @@ closeModal.addEventListener('click', () => {
 let newBook;
 
 submitButton.addEventListener('click', function(e) {
-    newBook = Book(
+    newBook = new Book(
       campos[0].value,
       campos[1].value,
       campos[2].value,
