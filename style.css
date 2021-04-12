@@ -53,22 +53,40 @@ body {
 
 .modal {
   position: fixed;
-  display: none;
+  visibility: hidden;
+  opacity: 0;
+
   width: 100%;
   height: 100%;
   background-color: rgba(125, 125, 125, 0.5);
   place-items: center;
   z-index: 99999;
+  transition: opacity 0.2s;
+}
+
+.modal-active {
+  display: grid !important;
+  visibility: visible;
+  opacity: 1 !important;
+
+
 }
 
 
+
 .modal-content {
-  display: none;
+  visibility: hidden;
   position: relative;
-  width: 500px;
-  height: 600px;
+  width: 50%;
+  height: 50%;
   background-color: white;
   border-radius: 1%;
+}
+
+.modal-content-active {
+  display: flex !important;
+  visibility: visible;
+
 }
 
 /* ----- buttons styles -----  */
@@ -104,3 +122,15 @@ button {
 
 }
 
+
+form {
+
+padding: 10px;
+
+}
+
+form > h1{
+
+text-align: center;
+
+}

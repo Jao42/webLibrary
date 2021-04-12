@@ -8,16 +8,16 @@ class Book {
   }
 }
 
-function addListenerReadButton(readButton, readOption, Book){
+function addListenerReadButton(readButton, readButtonText, Book){
   readButton.addEventListener('click', () => {
     index = library.indexOf(Book)
-    if (readOption.textContent === 'YES') {
+    if (readButtonText.textContent === 'YES') {
       library[index]['Readed'] = 'NO';
-      readOption.textContent = 'NO';
+      readButtonText.textContent = 'NO';
     }
     else {
       library[library.indexOf(Book)]['Readed'] = 'YES';
-      readOption.textContent = 'YES';
+      readButtonText.textContent = 'YES';
 
       }
 
@@ -131,13 +131,13 @@ const campos = document.querySelectorAll('input[type]');
 persistence()
 
 newBookButton.addEventListener('click', () => {
-  modal.style.display = 'grid';
-  modalContent.style.display = 'flex';
+  modal.classList.toggle('modal-active')
+  modalContent.classList.toggle('modal-content-active')
 })
 
 closeModal.addEventListener('click', () => {
-  modal.style.display = 'none';
-  modalContent.style.display = 'none';
+  modal.classList.toggle('modal-active')
+  modalContent.classList.toggle('modal-content-active')
   form.reset();
 })
 
