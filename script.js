@@ -103,7 +103,7 @@ function updateCardListeners(newBook) {
   closeButtonListener(closeButton, card, cardBox, newBook);
 }
 
-function persistence() {
+function getData() {
   if (library.length < localStorage.length) {
       elementsNum = localStorage.length;
 
@@ -133,7 +133,7 @@ const form = document.querySelector('form');
 const submitButton = document.querySelector('.submit');
 const campos = document.querySelectorAll('input[type]');
 
-persistence()
+getData()
 
 newBookButton.addEventListener('click', () => {
   modalChangeState(modal, modalContent);
