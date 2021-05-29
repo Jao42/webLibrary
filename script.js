@@ -119,6 +119,11 @@ function persistence() {
   }
 }
 
+function modalChangeState(modal, modalContent) {
+  modal.classList.toggle('modal-active');
+  modalContent.classList.toggle('modal-content-active');
+}
+
 
 const newBookButton = document.querySelector('.book-creator-button');
 const modal = document.querySelector('.modal');
@@ -131,13 +136,11 @@ const campos = document.querySelectorAll('input[type]');
 persistence()
 
 newBookButton.addEventListener('click', () => {
-  modal.classList.toggle('modal-active')
-  modalContent.classList.toggle('modal-content-active')
+  modalChangeState(modal, modalContent);
 })
 
 closeModal.addEventListener('click', () => {
-  modal.classList.toggle('modal-active')
-  modalContent.classList.toggle('modal-content-active')
+  modalChangeState(modal, modalContent);
   form.reset();
 })
 
@@ -164,5 +167,7 @@ submitButton.addEventListener('click', function(e) {
     changeReadButtons = document.querySelectorAll('.readOptions > input');
 
     updateCardListeners(newBook);
+    modalChangeState(modal);
+    form.reset();
 
   })
